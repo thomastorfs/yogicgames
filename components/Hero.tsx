@@ -1,12 +1,13 @@
 import React from 'react';
 import { ArrowRight, Activity } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface HeroProps {
-  onNavigate: (view: 'list' | 'analytics') => void;
   isDark: boolean;
 }
 
-export const Hero = ({ onNavigate, isDark }: HeroProps) => {
+export const Hero = ({ isDark }: HeroProps) => {
+  const navigate = useNavigate();
   return (
     <div className="relative overflow-hidden py-32 lg:py-48 flex items-center justify-center">
        {/* Abstract BG */}
@@ -25,14 +26,14 @@ export const Hero = ({ onNavigate, isDark }: HeroProps) => {
           
           <div className="flex flex-col sm:flex-row justify-center gap-6">
              <button 
-               onClick={() => onNavigate('list')} 
+               onClick={() => navigate('/database')} 
                className="px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl text-lg font-bold hover:scale-105 transition-transform shadow-xl flex items-center justify-center gap-3"
              >
                Access Database <ArrowRight size={20} />
              </button>
              
              <button 
-               onClick={() => onNavigate('analytics')} 
+               onClick={() => navigate('/analytics')} 
                className="px-8 py-4 bg-white/50 dark:bg-white/10 backdrop-blur-md border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white rounded-xl text-lg font-bold hover:bg-white/80 dark:hover:bg-white/20 transition-all flex items-center justify-center gap-3"
              >
                View Metrics <Activity size={20} />

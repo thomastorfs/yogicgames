@@ -2,27 +2,28 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer 
 } from 'recharts';
+import { useSearchParams } from 'react-router-dom';
 import { Game, GameAttributes } from '../types';
 import { ATTRIBUTE_DEFINITIONS, POSITIVE_ATTRS, NEGATIVE_ATTRS } from '../utils';
 
 interface AttributeExplorerProps {
   games: Game[];
   onSelectGame: (game: Game) => void;
-  targetAttribute?: keyof GameAttributes | null;
 }
 
-export const AttributeExplorer = ({ games, onSelectGame, targetAttribute }: AttributeExplorerProps) => {
+export const AttributeExplorer = ({ games, onSelectGame }: AttributeExplorerProps) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const targetAttribute = searchParams.get('attr') as keyof GameAttributes | null;
   const [activeAttr, setActiveAttr] = useState<keyof GameAttributes>(targetAttribute || 'sattva');
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<HTMLDivElement>(null);
 
-  // Handle external navigation to a specific attribute
+  // Handle URL updates
   useEffect(() => {
-    if (targetAttribute) {
+    if (targetAttribute && targetAttribute !== activeAttr) {
       setActiveAttr(targetAttribute);
       // Ensure the DOM is ready before scrolling
       setTimeout(() => {
-        // Scroll to the chart/list view specifically, as requested, to show data immediately
         chartRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
     }
@@ -30,6 +31,8 @@ export const AttributeExplorer = ({ games, onSelectGame, targetAttribute }: Attr
 
   const handleAttrClick = (attr: keyof GameAttributes) => {
     setActiveAttr(attr);
+    setSearchParams({ attr }); // Update URL
+    
     // On mobile, scroll to the chart view to show results immediately
     if (window.innerWidth < 1024) {
       setTimeout(() => {

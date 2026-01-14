@@ -1,29 +1,46 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Search, X, Monitor, Users, ArrowUpRight } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Game } from '../types';
 
 interface GameListProps {
   games: Game[];
-  onSelectGame: (game: Game) => void;
 }
 
-export const GameList = ({ games, onSelectGame }: GameListProps) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState<'rank' | 'score' | 'name'>('score');
+export const GameList = ({ games }: GameListProps) => {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Read initial state from URL
+  const initialSearch = searchParams.get('q') || "";
+  const initialSort = (searchParams.get('sort') as 'rank' | 'score' | 'name') || 'score';
+  const initialTier = searchParams.get('tier');
+  const initialPlatform = searchParams.get('platform');
+  const initialRating = searchParams.get('rating');
+
+  const [searchTerm, setSearchTerm] = useState(initialSearch);
+  const [sortBy, setSortBy] = useState<'rank' | 'score' | 'name'>(initialSort);
   const [filters, setFilters] = useState<{
     tier: string | null;
     platform: string | null;
     rating: string | null;
   }>({
-    tier: null,
-    platform: null,
-    rating: null
+    tier: initialTier,
+    platform: initialPlatform,
+    rating: initialRating
   });
 
-  // Scroll to top when filters/sort/search change
+  // Sync state to URL
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [searchTerm, sortBy, filters]);
+    const params: Record<string, string> = {};
+    if (searchTerm) params.q = searchTerm;
+    if (sortBy !== 'score') params.sort = sortBy;
+    if (filters.tier) params.tier = filters.tier;
+    if (filters.platform) params.platform = filters.platform;
+    if (filters.rating) params.rating = filters.rating;
+    
+    setSearchParams(params, { replace: true });
+  }, [searchTerm, sortBy, filters, setSearchParams]);
 
   const toggleFilter = (type: 'tier' | 'platform' | 'rating', value: string) => {
     setFilters(prev => ({
@@ -34,6 +51,10 @@ export const GameList = ({ games, onSelectGame }: GameListProps) => {
 
   const clearFilter = (type: 'tier' | 'platform' | 'rating') => {
     setFilters(prev => ({ ...prev, [type]: null }));
+  };
+
+  const clearAllFilters = () => {
+    setFilters({ tier: null, platform: null, rating: null });
   };
 
   const filteredGames = useMemo(() => {
@@ -108,7 +129,7 @@ export const GameList = ({ games, onSelectGame }: GameListProps) => {
                   ))}
                   {(filters.tier || filters.platform || filters.rating) && (
                       <button 
-                          onClick={() => setFilters({ tier: null, platform: null, rating: null })}
+                          onClick={clearAllFilters}
                           className="px-4 h-12 rounded-md text-xs font-bold uppercase tracking-widest border border-cyber-red/50 text-cyber-red hover:bg-cyber-red/10 flex items-center gap-2"
                       >
                           CLEAR FILTERS <X size={14} />
@@ -132,7 +153,7 @@ export const GameList = ({ games, onSelectGame }: GameListProps) => {
           {filteredGames.map((game) => (
               <div 
                   key={game.id}
-                  onClick={() => onSelectGame(game)}
+                  onClick={() => navigate(`/game/${game.id}`)}
                   className="group relative glass-panel rounded-lg p-0 hover:border-cyber-cyan/50 transition-all duration-300 cursor-pointer flex flex-col h-full overflow-hidden hover:shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:-translate-y-1"
               >
                   {/* Decorative Status Bar */}

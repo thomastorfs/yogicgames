@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Game, GameAttributes } from '../types';
 import { Hero } from './Hero';
 import { StatsGrid } from './StatsGrid';
@@ -7,19 +8,18 @@ import { TopBottomLists } from './TopBottomLists';
 
 interface HomeProps {
   games: Game[];
-  onNavigate: (view: 'list' | 'analytics') => void;
-  onSelectGame: (game: Game) => void;
   isDark: boolean;
-  onAttributeSelect: (attr: keyof GameAttributes) => void;
 }
 
-export const Home = ({ games, onNavigate, onSelectGame, isDark, onAttributeSelect }: HomeProps) => {
+export const Home = ({ games, isDark }: HomeProps) => {
+  const navigate = useNavigate();
+
   return (
     <div className="animate-in fade-in duration-500">
-      <Hero onNavigate={onNavigate} isDark={isDark} />
-      <StatsGrid onAttributeSelect={onAttributeSelect} />
-      <TopBottomLists games={games} onSelectGame={onSelectGame} />
-      <Methodology onAttributeSelect={onAttributeSelect} />
+      <Hero isDark={isDark} />
+      <StatsGrid onAttributeSelect={(attr) => navigate(`/analytics?attr=${attr}`)} />
+      <TopBottomLists games={games} onSelectGame={(g) => navigate(`/game/${g.id}`)} />
+      <Methodology onAttributeSelect={(attr) => navigate(`/analytics?attr=${attr}`)} />
     </div>
   );
 };

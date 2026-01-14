@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { Game, GameAttributes } from './types';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { Game } from './types';
 import { loadData } from './data';
-import { GameDetail } from './components/GameDetail';
+import { GameDetailWrapper } from './components/GameDetail';
 import { Home } from './components/Home';
 import { GameList } from './components/GameList';
 import { Analytics } from './components/Analytics';
 import { Header } from './components/Header';
 import { MobileMenu } from './components/MobileMenu';
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [pathname]);
+
+  return null;
+};
+
 export const App = () => {
   const [games, setGames] = useState<Game[]>([]);
-  const [view, setView] = useState<'home' | 'list' | 'analytics'>('home');
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  
-  // State to track navigation to specific analytics attribute
-  const [targetAttribute, setTargetAttribute] = useState<keyof GameAttributes | null>(null);
-  
-  // Theme State - Default to dark for neon aesthetic
-  const [isDark, setIsDark] = useState(true);
+  const location = useLocation();
   
   // Mobile Menu State
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -28,26 +32,21 @@ export const App = () => {
   }, []);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-    setIsMobileMenuOpen(false); // Close mobile menu on view change
-  }, [view, selectedGame]);
+    setIsMobileMenuOpen(false); // Close mobile menu on route change
+  }, [location.pathname]);
 
-  const handleNavClick = (newView: 'home' | 'list' | 'analytics') => {
-    setView(newView);
-    setSelectedGame(null);
-    if (newView !== 'analytics') {
-      setTargetAttribute(null);
-    }
-  };
-
-  const handleAttributeSelect = (attr: keyof GameAttributes) => {
-    setTargetAttribute(attr);
-    setSelectedGame(null); // Close game detail if open
-    setView('analytics');
-  };
+  // Update Document Title based on route
+  useEffect(() => {
+    const path = location.pathname;
+    if (path === '/') document.title = 'YogicGames // Protocol';
+    else if (path.includes('/database')) document.title = 'YogicGames // Database';
+    else if (path.includes('/analytics')) document.title = 'YogicGames // Analytics';
+    // Game detail title is handled within GameDetailWrapper
+  }, [location.pathname]);
 
   return (
     <div className="dark min-h-screen bg-cyber-black text-slate-200 font-sans selection:bg-cyber-cyan selection:text-black">
+      <ScrollToTop />
       
       {/* Background FX */}
       <div className="fixed inset-0 bg-grid-pattern opacity-40 pointer-events-none z-0"></div>
@@ -55,8 +54,6 @@ export const App = () => {
 
       {/* Header */}
       <Header 
-        currentView={view} 
-        onNavigate={handleNavClick as any} 
         isMobileMenuOpen={isMobileMenuOpen} 
         setIsMobileMenuOpen={setIsMobileMenuOpen} 
       />
@@ -64,47 +61,17 @@ export const App = () => {
       {/* Mobile Navigation Menu */}
       <MobileMenu 
         isOpen={isMobileMenuOpen} 
-        currentView={view} 
-        onNavigate={handleNavClick as any} 
       />
 
       {/* Main Content */}
-      <main className="relative z-10 pt-20 pb-20 px-4 md:px-6">
-        
-        {selectedGame ? (
-          <GameDetail 
-            game={selectedGame} 
-            games={games}
-            onClose={() => handleNavClick('list')}
-            onSelectGame={setSelectedGame}
-            onAttributeSelect={handleAttributeSelect}
-            isDark={isDark}
-          />
-        ) : (
-          <>
-            {view === 'home' && (
-              <Home 
-                games={games}
-                onNavigate={handleNavClick as any} 
-                onSelectGame={setSelectedGame}
-                isDark={isDark} 
-                onAttributeSelect={handleAttributeSelect}
-              />
-            )}
-
-            {view === 'list' && (
-              <GameList games={games} onSelectGame={setSelectedGame} />
-            )}
-
-            {view === 'analytics' && (
-              <Analytics 
-                games={games} 
-                onSelectGame={setSelectedGame} 
-                targetAttribute={targetAttribute}
-              />
-            )}
-          </>
-        )}
+      <main className="relative z-10 pt-28 pb-20 px-4 md:px-6">
+        <Routes>
+          <Route path="/" element={<Home games={games} isDark={true} />} />
+          <Route path="/database" element={<GameList games={games} />} />
+          <Route path="/analytics" element={<Analytics games={games} />} />
+          <Route path="/game/:id" element={<GameDetailWrapper games={games} isDark={true} />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
     </div>
   );

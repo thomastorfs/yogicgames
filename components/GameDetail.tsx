@@ -1,9 +1,43 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { ShieldAlert, Monitor, Users, Brain, AlertTriangle, ChevronLeft, ExternalLink, Gamepad2, Activity, Search, ArrowUpRight } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Game, GameAttributes } from '../types';
 import { RadarDisplay } from './RadarDisplay';
 import { ATTRIBUTE_DEFINITIONS, POSITIVE_ATTRS, NEGATIVE_ATTRS } from '../utils';
 import { SimilarGames } from './SimilarGames';
+
+// Wrapper to handle data fetching from ID
+export const GameDetailWrapper = ({ games, isDark }: { games: Game[], isDark: boolean }) => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  
+  const game = useMemo(() => games.find(g => g.id === id), [games, id]);
+
+  useEffect(() => {
+    if (game) {
+      document.title = `YogicGames // ${game.title}`;
+    }
+  }, [game]);
+
+  if (!games.length) return null; // Loading state handled by parent usually, or flash empty
+  if (!game) return (
+    <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
+       <h2 className="text-2xl font-bold text-cyber-red mb-4">PROTOCOL NOT FOUND</h2>
+       <button onClick={() => navigate('/database')} className="text-cyber-cyan hover:underline">Return to Database</button>
+    </div>
+  );
+
+  return (
+    <GameDetail 
+      game={game} 
+      games={games} 
+      onClose={() => navigate('/database')}
+      onSelectGame={(g) => navigate(`/game/${g.id}`)}
+      onAttributeSelect={(attr) => navigate(`/analytics?attr=${attr}`)}
+      isDark={isDark}
+    />
+  );
+};
 
 export const GameDetail = ({ 
   game, 
@@ -21,11 +55,6 @@ export const GameDetail = ({
   isDark: boolean 
 }) => {
   
-  // Scroll to top when game changes
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [game.id]);
-
   const getStoreDetails = () => {
     // 1. Steam (Exact Match)
     if (game.steamAppId) {
