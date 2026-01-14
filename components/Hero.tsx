@@ -16,7 +16,7 @@ export const Hero = ({ isDark }: HeroProps) => {
        </div>
        
        <div className="container mx-auto px-4 relative z-10 text-center max-w-5xl">            
-          <h1 className="text-6xl md:text-8xl font-display font-black tracking-tight mb-8 text-slate-900 dark:text-white leading-none">
+          <h1 className="text-5xl md:text-6xl lg:text-8xl font-display font-black tracking-tight mb-8 text-slate-900 dark:text-white leading-none">
             YOGIC<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-purple-500">GAMES</span>
           </h1>
           
