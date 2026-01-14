@@ -124,7 +124,7 @@ export const AttributeExplorer = ({ games, onSelectGame }: AttributeExplorerProp
 
            <div ref={chartRef} className="lg:col-span-9 flex flex-col h-[1000px] scroll-mt-28">
               <div className="mb-6 pb-6 border-b border-white/10">
-                  <h3 className="text-3xl font-display font-bold text-white mb-2 uppercase tracking-wide">{activeTitle}</h3>
+                  <h3 className="text-3xl font-display font-bold text-white mb-2 uppercase tracking-wide">Top 20 for {activeTitle}</h3>
                   <p className="text-cyber-cyan/70 font-mono text-sm">{activeDesc}</p>
               </div>
               <div className="flex-1">
