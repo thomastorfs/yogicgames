@@ -69,7 +69,7 @@ export const App = () => {
       />
 
       {/* Main Content */}
-      <main className="relative z-10 pt-28 pb-20 px-4 md:px-6">
+      <main className="relative z-10 pt-20 pb-20 px-4 md:px-6">
         <Routes>
           <Route path="/" element={<Home games={games} isDark={true} />} />
           <Route path="/database" element={<GameList games={games} />} />
