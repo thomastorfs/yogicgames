@@ -87,8 +87,9 @@ yogicgames/
 ## Development
 
 Built with:
+- **Anthropic Opus 4.5**: Top 100 game list retrieval, yogic scoring and calculation
 - **Google AI Studio**: Primary development environment and prompt engineering tool
-- **GitHub Copilot**: Code assistance using Claude Haiku 4.5
+- **GitHub Copilot**: Final product vibe coding assistance using Claude Haiku 4.5
 
 ## License
 
