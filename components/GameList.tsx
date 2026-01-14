@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Search, X, Monitor, Users, ArrowUpRight } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Game } from '../types';
+import { generateSlug } from '../utils';
 
 interface GameListProps {
   games: Game[];
@@ -97,7 +98,7 @@ export const GameList = ({ games }: GameListProps) => {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-cyber-cyan transition-colors" size={18} />
                   <input 
                       type="text" 
-                      placeholder="ACCESS_DATABASE // SEARCH PROTOCOLS..." 
+                      placeholder="SEARCH GAMES..." 
                       className="w-full bg-cyber-dark border border-white/10 rounded-md h-12 pl-12 pr-12 text-sm font-mono text-cyber-cyan placeholder:text-slate-600 focus:outline-none focus:border-cyber-cyan/50 focus:shadow-[0_0_15px_rgba(0,240,255,0.1)] transition-all"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -153,7 +154,7 @@ export const GameList = ({ games }: GameListProps) => {
           {filteredGames.map((game) => (
               <div 
                   key={game.id}
-                  onClick={() => navigate(`/game/${game.id}`)}
+                  onClick={() => navigate(`/game/${generateSlug(game.title)}`)}
                   className="group relative glass-panel rounded-lg p-0 hover:border-cyber-cyan/50 transition-all duration-300 cursor-pointer flex flex-col h-full overflow-hidden hover:shadow-[0_0_20px_rgba(0,240,255,0.15)] hover:-translate-y-1"
               >
                   {/* Decorative Status Bar */}
@@ -196,7 +197,7 @@ export const GameList = ({ games }: GameListProps) => {
                       {/* Footer: Score & Action */}
                       <div className="flex items-center justify-between pt-4 border-t border-white/5 group-hover:border-white/10 transition-colors">
                           <span className="text-[10px] font-mono uppercase tracking-widest text-slate-600 group-hover:text-white transition-colors flex items-center gap-1">
-                              View Protocol <ArrowUpRight size={10}/>
+                              View game <ArrowUpRight size={10}/>
                           </span>
                           
                           <div className="flex items-center gap-2 bg-black/30 px-3 py-1 rounded border border-white/5">

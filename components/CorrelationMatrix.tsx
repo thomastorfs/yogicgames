@@ -36,7 +36,7 @@ export const CorrelationMatrix = ({ games }: CorrelationMatrixProps) => {
       <div className="glass-panel rounded-2xl p-8 border border-white/10">
           <div className="flex items-center gap-3 mb-6">
              <Activity className="text-cyber-purple" size={24}/>
-             <h3 className="text-xl font-display font-bold text-white tracking-wider">MARKET CORRELATION MATRIX</h3>
+             <h3 className="text-xl font-display font-bold text-white tracking-wider">SUCCESS VS SPIRITUALITY</h3>
           </div>
           <div className="h-[500px] w-full relative">
              <ResponsiveContainer width="100%" height="100%">

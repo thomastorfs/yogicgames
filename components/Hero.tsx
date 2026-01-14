@@ -21,7 +21,7 @@ export const Hero = ({ isDark }: HeroProps) => {
           </h1>
           
           <p className="text-xl md:text-2xl font-light text-slate-600 dark:text-slate-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            The Conscious Gaming Protocol. We quantify the spiritual impact of digital entertainment using ancient Eastern frameworks.
+            The Conscious Gaming Website. We quantify the spiritual impact of digital entertainment using ancient Eastern frameworks.
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-6">

@@ -10,11 +10,16 @@ import { Header } from './components/Header';
 import { MobileMenu } from './components/MobileMenu';
 
 const ScrollToTop = () => {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
 
   useEffect(() => {
+    // Skip scrolling to top if navigating to analytics with an attribute parameter
+    // Let AttributeExplorer handle the scroll to the chart
+    if (pathname === '/analytics' && new URLSearchParams(search).has('attr')) {
+      return;
+    }
     window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [pathname]);
+  }, [pathname, search]);
 
   return null;
 };
@@ -38,7 +43,7 @@ export const App = () => {
   // Update Document Title based on route
   useEffect(() => {
     const path = location.pathname;
-    if (path === '/') document.title = 'YogicGames // Protocol';
+    if (path === '/') document.title = 'YogicGames // Home';
     else if (path.includes('/database')) document.title = 'YogicGames // Database';
     else if (path.includes('/analytics')) document.title = 'YogicGames // Analytics';
     // Game detail title is handled within GameDetailWrapper
@@ -69,7 +74,7 @@ export const App = () => {
           <Route path="/" element={<Home games={games} isDark={true} />} />
           <Route path="/database" element={<GameList games={games} />} />
           <Route path="/analytics" element={<Analytics games={games} />} />
-          <Route path="/game/:id" element={<GameDetailWrapper games={games} isDark={true} />} />
+          <Route path="/game/:slug" element={<GameDetailWrapper games={games} isDark={true} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

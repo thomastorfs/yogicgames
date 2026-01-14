@@ -59,3 +59,12 @@ export const calculateScore = (attrs: GameAttributes): number => {
 
   return parseFloat((positive - negative).toFixed(2));
 };
+
+export const generateSlug = (title: string): string => {
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
+};

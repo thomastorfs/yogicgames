@@ -5,6 +5,7 @@ import { Hero } from './Hero';
 import { StatsGrid } from './StatsGrid';
 import { Methodology } from './Methodology';
 import { TopBottomLists } from './TopBottomLists';
+import { generateSlug } from '../utils';
 
 interface HomeProps {
   games: Game[];
@@ -18,7 +19,7 @@ export const Home = ({ games, isDark }: HomeProps) => {
     <div className="animate-in fade-in duration-500">
       <Hero isDark={isDark} />
       <StatsGrid onAttributeSelect={(attr) => navigate(`/analytics?attr=${attr}`)} />
-      <TopBottomLists games={games} onSelectGame={(g) => navigate(`/game/${g.id}`)} />
+      <TopBottomLists games={games} onSelectGame={(g) => navigate(`/game/${generateSlug(g.title)}`)} />
       <Methodology onAttributeSelect={(attr) => navigate(`/analytics?attr=${attr}`)} />
     </div>
   );

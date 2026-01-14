@@ -3,15 +3,18 @@ import { ShieldAlert, Monitor, Users, Brain, AlertTriangle, ChevronLeft, Externa
 import { useParams, useNavigate } from 'react-router-dom';
 import { Game, GameAttributes } from '../types';
 import { RadarDisplay } from './RadarDisplay';
-import { ATTRIBUTE_DEFINITIONS, POSITIVE_ATTRS, NEGATIVE_ATTRS } from '../utils';
+import { ATTRIBUTE_DEFINITIONS, POSITIVE_ATTRS, NEGATIVE_ATTRS, generateSlug } from '../utils';
 import { SimilarGames } from './SimilarGames';
 
-// Wrapper to handle data fetching from ID
+// Wrapper to handle data fetching from slug
 export const GameDetailWrapper = ({ games, isDark }: { games: Game[], isDark: boolean }) => {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   
-  const game = useMemo(() => games.find(g => g.id === id), [games, id]);
+  const game = useMemo(() => {
+    if (!slug) return undefined;
+    return games.find(g => generateSlug(g.title) === slug);
+  }, [games, slug]);
 
   useEffect(() => {
     if (game) {
@@ -22,7 +25,7 @@ export const GameDetailWrapper = ({ games, isDark }: { games: Game[], isDark: bo
   if (!games.length) return null; // Loading state handled by parent usually, or flash empty
   if (!game) return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] text-center">
-       <h2 className="text-2xl font-bold text-cyber-red mb-4">PROTOCOL NOT FOUND</h2>
+       <h2 className="text-2xl font-bold text-cyber-red mb-4">GAME NOT FOUND</h2>
        <button onClick={() => navigate('/database')} className="text-cyber-cyan hover:underline">Return to Database</button>
     </div>
   );
@@ -32,7 +35,7 @@ export const GameDetailWrapper = ({ games, isDark }: { games: Game[], isDark: bo
       game={game} 
       games={games} 
       onClose={() => navigate('/database')}
-      onSelectGame={(g) => navigate(`/game/${g.id}`)}
+      onSelectGame={(g) => navigate(`/game/${generateSlug(g.title)}`)}
       onAttributeSelect={(attr) => navigate(`/analytics?attr=${attr}`)}
       isDark={isDark}
     />

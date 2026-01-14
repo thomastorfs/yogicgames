@@ -18,29 +18,7 @@ export const AttributeExplorer = ({ games, onSelectGame }: AttributeExplorerProp
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<HTMLDivElement>(null);
 
-  // Handle URL updates
-  useEffect(() => {
-    if (targetAttribute && targetAttribute !== activeAttr) {
-      setActiveAttr(targetAttribute);
-      // Ensure the DOM is ready before scrolling
-      setTimeout(() => {
-        chartRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    }
-  }, [targetAttribute]);
-
-  const handleAttrClick = (attr: keyof GameAttributes) => {
-    setActiveAttr(attr);
-    setSearchParams({ attr }); // Update URL
-    
-    // On mobile, scroll to the chart view to show results immediately
-    if (window.innerWidth < 1024) {
-      setTimeout(() => {
-        chartRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    }
-  };
-
+  // Compute active attribute data
   const activeAttrData = useMemo(() => {
     const sorted = [...games]
       .sort((a, b) => {
@@ -57,6 +35,32 @@ export const AttributeExplorer = ({ games, onSelectGame }: AttributeExplorerProp
       originalGame: g
     }));
   }, [games, activeAttr]);
+
+  // Handle URL updates (when navigating from home page or game detail page)
+  useEffect(() => {
+    if (targetAttribute && targetAttribute !== activeAttr) {
+      setActiveAttr(targetAttribute);
+    }
+  }, [targetAttribute]);
+
+  // Scroll to chart after data is rendered
+  useEffect(() => {
+    if (targetAttribute && activeAttrData.length > 0) {
+      setTimeout(() => {
+        chartRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [activeAttrData, targetAttribute]);
+
+  const handleAttrClick = (attr: keyof GameAttributes) => {
+    setActiveAttr(attr);
+    setSearchParams({ attr }); // Update URL
+    
+    // Scroll to the chart view to show results
+    setTimeout(() => {
+      chartRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  };
 
   const isPositiveAttr = POSITIVE_ATTRS.includes(activeAttr);
   const activeColor = isPositiveAttr ? "#0aff60" : "#ff2a2a"; // Neon Green : Neon Red
